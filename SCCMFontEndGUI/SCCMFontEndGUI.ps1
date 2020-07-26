@@ -80,7 +80,7 @@ function Set-OSDTaskSequenceVariables
 
        $ComputerNameTextBox.Text.Contains('>') -or $ComputerNameTextBox.Text.Contains("<") -or $ComputerNameTextBox.Text.Contains("?") -or $ComputerNameTextBox.Text.Contains(" ") -or $ComputerNameTextBox.Text.Contains("'") -or
 
-       $ComputerNameTextBox.Text.Contains('"') )
+       $ComputerNameTextBox.Text.Contains('"') -or $ComputerNameTextBox.Text.Contains('!'))
 
         {
            
