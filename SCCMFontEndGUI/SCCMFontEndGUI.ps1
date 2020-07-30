@@ -22,19 +22,21 @@
 
 '@
 
+
+$reader=(New-Object System.Xml.XmlNodeReader $xaml) 
+try{$Form=[Windows.Markup.XamlReader]::Load( $reader )}
+catch{ Write-Host "Unable to load Windows.Markup.XamlReader. invalid XAML code was encountered or .NET FrameWork is missing."; exit}
+$xaml.SelectNodes("//*[@Name]") | ForEach-Object {Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name) -Scope global } 
+
+
 $global:SelectedKeyboard = "en-US"
 $global:SelectedLocale = "en-US"
 $global:SelectedTimezone = "Eastern Standard Time"
 
 
-$reader=(New-Object System.Xml.XmlNodeReader $xaml) 
-try{$Form=[Windows.Markup.XamlReader]::Load( $reader )}
-catch{ Write-Host "Unable to load Windows.Markup.XamlReader. invalid XAML code was encountered or .NET FrameWork is missing."; exit}
-$xaml.SelectNodes("//*[@Name]") | %{Set-Variable -Name ($_.Name) -Value $Form.FindName($_.Name) -Scope global } 
-
 $LocaleCsv = Import-Csv Locale.csv
-
 $TimeZoneCsv = Import-Csv TimeZone.csv
+
 
 Foreach($LocaleValues in $LocaleCsv.DisplayName)
 
@@ -45,23 +47,23 @@ Foreach($LocaleValues in $LocaleCsv.DisplayName)
 
 }
 
+
 Foreach ($Timezones in $TimeZoneCsv.DisplayName)
 
 {
     $TimeZoneComboBox.Items.Add("$Timezones") | Out-Null
 }
 
+
 $TimeZoneComboBox.SelectedValue = "(UTC-05:00) Eastern Time (US ; Canada)"
-
 $LocaleComboBox.SelectedValue = "English (United States)"
-
 $KeyboardComboBox.SelectedValue = "English (United States)"
 
+
 $TimeZoneComboBox.add_SelectionChanged({$global:SelectedTimezone = $TimeZoneCsv.TImeZoneCode[$TimeZoneComboBox.SelectedIndex]})
-
 $LocaleComboBox.add_SelectionChanged({$global:SelectedLocale= $LocaleCsv.LocaleCode[$LocaleComboBox.SelectedIndex]})
-
 $KeyboardComboBox.add_SelectionChanged({$global:SelectedKeyboard = $LocaleCsv.LocaleCode[$KeyboardComboBox.SelectedIndex]})
+
 
 function Set-OSDTaskSequenceVariables
 
@@ -104,15 +106,15 @@ function Set-OSDTaskSequenceVariables
                         
             $TSEnv.Value("OSDInputLocale") = "$($global:SelectedLocale)"
 
- $($global:SelectedLocale) | Out-File X:\Windows\Temp\Var.txt -append
+        $($global:SelectedLocale) | Out-File X:\Windows\Temp\Var.txt -append
 
             $TSEnv.Value("OSDTimeZone") = "$($global:SelectedTimezone)"
 
- "$($global:SelectedTimezone)" | Out-File X:\Windows\Temp\Var.txt -append
+        "$($global:SelectedTimezone)" | Out-File X:\Windows\Temp\Var.txt -append
 
             $TSEnv.Value("OSDSystemLocale") = "$($global:SelectedKeyboard)"
 
- "$($global:SelectedKeyboard)" | Out-File X:\Windows\Temp\Var.txt -append
+        "$($global:SelectedKeyboard)" | Out-File X:\Windows\Temp\Var.txt -append
 
                
             
